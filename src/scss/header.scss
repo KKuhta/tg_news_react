@@ -1,0 +1,36 @@
+.container {
+  justify-content: space-between;
+}
+
+.header {
+  padding-top: 30px;
+  margin-bottom: 30px;
+
+  &__logo {
+    margin: 20px 30px 20px 30px;
+  }
+
+  &__logoUrl {
+    color: #1967ff;
+    font-size: 30px;
+  }
+  &__logoUrl:hover {
+    color: #1967ff;
+    font-size: 30px;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    margin: 20px 30px 20px 30px;
+
+    &__Logo {
+      width: 41px;
+      height: 41px;
+    }
+    &__Name {
+      margin: 0;
+      padding-left: 10px;
+    }
+  }
+}

@@ -1,0 +1,37 @@
+@import 'libs/normalize';
+
+p,
+h4,
+h3 {
+  padding-left: 0;
+  margin: 0;
+}
+
+h1 {
+  font-size: 30px;
+  color: #1967ff;
+}
+
+p {
+  font-size: 22px;
+  color: #fff;
+}
+.background {
+  background: url(../img/телеграмм_подписки7.png);
+  background-repeat: repeat;
+  background-position: 0 0;
+  background-size: auto 100%;
+  width: 100%;
+  position: absolute;
+
+  background-attachment: fixed;
+}
+
+.container {
+  width: 1060px;
+  padding: 0;
+  background-color: rgba($color: #0d0d0d, $alpha: 0.7);
+  border-radius: 10px;
+  display: flex;
+  backdrop-filter: blur(1.5px);
+}
