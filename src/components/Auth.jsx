@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import '../scss/auth.scss';
 import { useState } from 'react';
 import InputMask from 'react-input-mask';
 import { useNavigate } from 'react-router-dom';
+
 import axios from 'axios';
+import Cookies from 'js-cookie';
 function PhoneInput(props) {
   return <InputMask mask="+79999999999" value={props.value} onChange={props.onChange}></InputMask>;
 }
@@ -17,7 +19,26 @@ const Auth = () => {
   const [number, setMobileNumber] = useState('');
   const [showCodeForm, setShowCodeForm] = useState(false);
   const [code, setCode] = useState('');
+  const [token, setToken] = useState(Cookies.get('token') || '');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Проверяем авторизацию пользователя при загрузке страницы
+    checkAuthorization();
+  }, []);
+
+  const checkAuthorization = async () => {
+    // Проверяем наличие токена
+    if (token) {
+      // Здесь можно выполнить проверку токена на сервере, чтобы убедиться, что он действителен
+      // Если токен действителен, пользователь авторизован
+      console.log('Пользователь авторизован');
+      console.log('token:', token);
+      //navigate('/profile');
+    } else {
+      console.log('Пользователь не авторизован');
+    }
+  };
 
   let handleSubmit = async (event) => {
     event.preventDefault();
@@ -57,6 +78,11 @@ const Auth = () => {
       });
 
       if (res.status === 200) {
+        const responseJson = await res.json();
+        const token = responseJson.token;
+        Cookies.set('token', token); // Сохраняем токен в куки
+        setToken(token);
+        setCode('');
         console.log('Code verified successfully');
         navigate('/profile');
       } else {

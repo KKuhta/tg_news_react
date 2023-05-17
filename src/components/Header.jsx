@@ -10,7 +10,7 @@ const Header = () => {
       <div className="container">
         <div className="header__logo">
           <Link to="/profile" className="header__logoUrl">
-            LOGO NAME
+            TELEGRAM NEWS FEED
           </Link>
         </div>
 

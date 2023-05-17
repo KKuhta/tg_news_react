@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../scss/profile.scss';
 import Header from '../components/Header';
+import Cookies from 'js-cookie';
 
 const Profile = () => {
+  const [token, setToken] = useState(Cookies.get('token') || '');
+  useEffect(() => {
+    // Проверяем авторизацию пользователя при загрузке страницы
+    checkAuthorization();
+  }, []);
+
+  const checkAuthorization = async () => {
+    // Проверяем наличие токена
+    if (token) {
+      // Здесь можно выполнить проверку токена на сервере, чтобы убедиться, что он действителен
+      // Если токен действителен, пользователь авторизован
+      console.log('Пользователь авторизован');
+      console.log('token:', token);
+    } else {
+      console.log('Пользователь не авторизован');
+    }
+  };
   return (
     <div className="background">
       <Header />
