@@ -15,7 +15,7 @@ function CodeInput(props) {
   return <InputMask mask="99999" value={props.value} onChange={props.onChange}></InputMask>;
 }
 
-const Auth = () => {
+const Bxod = () => {
   const [number, setMobileNumber] = useState('');
   const [showCodeForm, setShowCodeForm] = useState(false);
   const [code, setCode] = useState('');
@@ -41,7 +41,7 @@ const Auth = () => {
   let handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      let res = await fetch('https://m1.itsk.pw/newsfeed/auth/signup_number', {
+      let res = await fetch('https://m1.itsk.pw/newsfeed/auth/signin_number', {
         mode: 'cors',
         method: 'POST',
         body: JSON.stringify({
@@ -49,16 +49,28 @@ const Auth = () => {
         }),
       });
 
-      if (res.status === 200) {
-        let responseJson = await res.json();
-        console.log(responseJson);
-        let token = responseJson.token;
-        let refresh = responseJson.refresh;
-        console.log('token:', token);
-        console.log('refresh:', refresh);
-        setShowCodeForm(true);
-      } else {
-        console.log(res);
+      if (res.status === 401) {
+        setToken(refresh);
+        const resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${refresh}`,
+          },
+        });
+        if (resRefresh.status === 200) {
+          const responseJson = await res.json();
+          const newToken = responseJson.token;
+          const newRefresh = responseJson.refresh;
+          setToken(newToken);
+          setRefresh(newRefresh);
+          Cookies.set('token', newToken);
+          Cookies.set('refresh', newRefresh);
+          checkAuthorization();
+          navigate('/profile');
+        } else {
+          alert('Failed');
+          console.log('Code verification failed');
+        }
       }
     } catch (error) {
       console.log(error);
@@ -68,7 +80,7 @@ const Auth = () => {
   let handleCodeSubmit = async (event) => {
     event.preventDefault();
     try {
-      let res = await fetch('https://m1.itsk.pw/newsfeed/auth/signup_number', {
+      let res = await fetch('https://m1.itsk.pw/newsfeed/auth/signin_number', {
         method: 'POST',
         body: JSON.stringify({
           code: code,
@@ -89,6 +101,14 @@ const Auth = () => {
       } else {
         alert('Failed');
         console.log('Code verification failed');
+      }
+      if (res.status === 401) {
+        const resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${refresh}`,
+          },
+        });
       }
     } catch (error) {
       console.log(error);
@@ -142,4 +162,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default Bxod;

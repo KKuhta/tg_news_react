@@ -5,18 +5,17 @@ import Cookies from 'js-cookie';
 
 const Profile = () => {
   const [token, setToken] = useState(Cookies.get('token') || '');
+  const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
+
   useEffect(() => {
-    // Проверяем авторизацию пользователя при загрузке страницы
     checkAuthorization();
   }, []);
 
   const checkAuthorization = async () => {
-    // Проверяем наличие токена
     if (token) {
-      // Здесь можно выполнить проверку токена на сервере, чтобы убедиться, что он действителен
-      // Если токен действителен, пользователь авторизован
       console.log('Пользователь авторизован');
       console.log('token:', token);
+      console.log('refresh:', refresh);
     } else {
       console.log('Пользователь не авторизован');
     }
