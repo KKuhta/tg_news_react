@@ -23,21 +23,6 @@ const Auth = () => {
   const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    checkAuthorization();
-  }, []);
-
-  const checkAuthorization = async () => {
-    if (token) {
-      console.log('Пользователь авторизован');
-      //console.log('token:', token);
-      //navigate('/profile');
-    } else {
-      console.log('Пользователь не авторизован');
-      navigate('/auth');
-    }
-  };
-
   let handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -87,8 +72,7 @@ const Auth = () => {
         console.log('Code verified successfully');
         navigate('/profile');
       } else {
-        alert('Failed');
-        console.log('Code verification failed');
+        alert('Неверный код');
       }
     } catch (error) {
       console.log(error);
@@ -99,7 +83,7 @@ const Auth = () => {
     <div className="container__form background">
       <div className="form">
         <div className="form__center">
-          {!showCodeForm ? ( // Проверяем состояние showCodeForm для отображения старой формы или новой формы
+          {!showCodeForm ? (
             <>
               <h1 className="form__h1">Введите номер телефона</h1>
               <form onSubmit={handleSubmit}>

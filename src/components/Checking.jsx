@@ -8,6 +8,8 @@ import Cookies from 'js-cookie';
 const Checking = () => {
   const [token, setToken] = useState(Cookies.get('token') || '');
   const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
+  const [refresh_token, setRefresh_token] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,25 +30,26 @@ const Checking = () => {
           },
         });
         console.log(res.status);
-        if (res.status === 401) {
-          let resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${refresh}`,
-            },
-          });
-        }
-        if (res.status === 200) {
-          const data = await res.json();
-          const newToken = data.token;
-          const newRefresh = data.refresh;
-          setToken(newToken);
-          setRefresh(newRefresh);
-          Cookies.set('token', newToken);
-          Cookies.set('refresh', newRefresh);
-          checkAuthorization();
-          return;
-        }
+        // if (res.status === 401) {
+        //   let resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
+        //     method: 'POST',
+        //     body: JSON.stringify({
+        //       refresh_token: refresh_token,
+        //     }),
+        //   });
+        // }
+        // if (res.status === 200) {
+        //   const responseJson = await res.json();
+        //   const token = responseJson.token;
+        //   const refresh = responseJson.refresh;
+        //   Cookies.set('token', token);
+        //   setToken(token);
+        //   Cookies.set('refresh', refresh);
+        //   setToken(refresh);
+
+        //   console.log('Code verified successfully');
+        //   navigate('/profile');
+        // }
         if (res.status === 403) {
           navigate('/Bxod');
         }
