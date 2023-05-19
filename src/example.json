@@ -1,0 +1,47 @@
+[
+  {
+    "group": [
+      {
+        "source_channel": "example_channel_1",
+        "text": "example_text_1",
+        "date": "2023-05-18T12:34:56Z"
+      }
+    ],
+    "type": 0
+  },
+  {
+    "group": [
+      {
+        "source_channel": "example_channel_2",
+        "text": "example_text_3",
+        "date": "2023-05-18T12:34:56Z"
+      },
+      {
+        "source_channel": "example_channel_3",
+        "text": "example_text_4",
+        "date": "2023-05-18T12:34:56Z"
+      }
+    ],
+    "type": 1
+  },
+  {
+    "group": [
+      {
+        "source_channel": "example_channel_4",
+        "text": "example_text_4",
+        "date": "2023-05-18T12:34:58Z"
+      }
+    ],
+    "type": 0
+  },
+  {
+    "group": [
+      {
+        "source_channel": "example_channel_5",
+        "text": "example_text_5",
+        "date": "2023-05-18T13:24:58Z"
+      }
+    ],
+    "type": 0
+  }
+]

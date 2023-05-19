@@ -29,35 +29,35 @@ const Checking = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(res.status);
-        // if (res.status === 401) {
-        //   let resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
-        //     method: 'POST',
-        //     body: JSON.stringify({
-        //       refresh_token: refresh_token,
-        //     }),
-        //   });
-        // }
-        // if (res.status === 200) {
-        //   const responseJson = await res.json();
-        //   const token = responseJson.token;
-        //   const refresh = responseJson.refresh;
-        //   Cookies.set('token', token);
-        //   setToken(token);
-        //   Cookies.set('refresh', refresh);
-        //   setToken(refresh);
-
-        //   console.log('Code verified successfully');
-        //   navigate('/profile');
-        // }
+        if (res.status === 401) {
+          const resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
+            method: 'POST',
+            body: JSON.stringify({
+              refresh_token: refresh,
+            }),
+          });
+          console.log(refresh_token);
+          if (resRefresh.status === 200) {
+            const responseJson = await resRefresh.json();
+            console.log(responseJson);
+            const token = responseJson.token;
+            const refresh = responseJson.refresh;
+            setToken(token);
+            setRefresh(refresh);
+            Cookies.set('token', token);
+            Cookies.set('refresh', refresh);
+            //checkAuthorization();
+            navigate('/profile');
+          } else {
+            console.log('Code verification failed');
+          }
+        }
         if (res.status === 403) {
           navigate('/Bxod');
         }
       } catch (error) {
         console.log(error);
       }
-
-      //navigate('/profile');
     } else {
       console.log('Пользователь не авторизован');
       navigate('/auth');
