@@ -21,6 +21,9 @@ const Auth = () => {
   const [code, setCode] = useState('');
   const [token, setToken] = useState(Cookies.get('token') || '');
   const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
+  const [refresh_token, setRefresh_token] = useState(Cookies.get('refresh_token') || '');
+  const [message, setMessage] = useState(Cookies.get('message') || '');
+
   const navigate = useNavigate();
 
   let handleSubmit = async (event) => {
@@ -37,10 +40,21 @@ const Auth = () => {
       if (res.status === 200) {
         let responseJson = await res.json();
         console.log(responseJson);
+        // let message = responseJson.message;
+        // console.log('message:', message);
+        // Cookies.set('message', message);
+        // setMessage(message);
+
         let token = responseJson.token;
-        let refresh = responseJson.refresh;
         console.log('token:', token);
+        Cookies.set('token', token);
+        setToken(token);
+
+        let refresh = responseJson.refresh;
         console.log('refresh:', refresh);
+        Cookies.set('refresh', refresh);
+        setRefresh(refresh);
+
         setShowCodeForm(true);
       } else {
         console.log(res);
@@ -53,26 +67,58 @@ const Auth = () => {
   let handleCodeSubmit = async (event) => {
     event.preventDefault();
     try {
-      let res = await fetch('https://m1.itsk.pw/newsfeed/auth/signup_number', {
+      let res = await fetch('https://m1.itsk.pw/newsfeed/auth/code', {
         method: 'POST',
         body: JSON.stringify({
           code: code,
         }),
       });
+      if (res.status === 401) {
+        const resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
+          method: 'POST',
+          body: JSON.stringify({
+            refresh_token: refresh,
+          }),
+        });
+        console.log(refresh_token);
+        if (resRefresh.status === 200) {
+          const responseJson = await resRefresh.json();
+          console.log(responseJson);
 
-      if (res.status === 200) {
-        const responseJson = await res.json();
-        const token = responseJson.token;
-        const refresh = responseJson.refresh;
-        Cookies.set('token', token);
-        setToken(token);
-        Cookies.set('refresh', refresh);
-        setToken(refresh);
-        setCode('');
-        console.log('Code verified successfully');
-        navigate('/profile');
-      } else {
-        alert('Неверный код');
+          let token = responseJson.token;
+          console.log('token:', token);
+          Cookies.set('token', token);
+          setToken(token);
+
+          let refresh = responseJson.refresh;
+          console.log('refresh:', refresh);
+          Cookies.set('refresh', refresh);
+          setRefresh(refresh);
+
+          let resCode = await fetch('https://m1.itsk.pw/newsfeed/auth/code', {
+            method: 'POST',
+            body: JSON.stringify({
+              code: code,
+            }),
+          });
+          if (resCode.status === 200) {
+            navigate('/profile');
+          }
+
+          // const token = responseJson.token;
+          // const refresh = responseJson.refresh;
+          // setToken(token);
+          //setRefresh(refresh);
+          // setRefresh_token(refresh);
+          // console.log('token:', token);
+          // console.log('refresh:', refresh);
+          // Cookies.set('token', token);
+          // Cookies.set('refresh', refresh);
+          //checkAuthorization();
+          //navigate('/profile');
+        } else {
+          console.log('Code verification failed');
+        }
       }
     } catch (error) {
       console.log(error);

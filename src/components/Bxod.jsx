@@ -18,7 +18,6 @@ function CodeInput(props) {
 const Bxod = () => {
   const [number, setMobileNumber] = useState('');
   const [showCodeForm, setShowCodeForm] = useState(false);
-  const [code, setCode] = useState('');
   const [token, setToken] = useState(Cookies.get('token') || '');
   const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
   const [refresh_token, setRefresh_token] = useState(Cookies.get('refresh_token') || '');
@@ -49,7 +48,7 @@ const Bxod = () => {
           number: number,
         }),
       });
-      console.log(refresh);
+
       if (res.status === 401) {
         const resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
           method: 'POST',

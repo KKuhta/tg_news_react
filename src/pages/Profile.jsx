@@ -24,7 +24,6 @@ const News = ({ group }) => {
             group.slice(1).map((item, index) => (
               <div key={index}>
                 <h1 className="news__h1">{item.source_channel}</h1>
-                <hr className="news__line" />
                 <p className="news__p">{item.text}</p>
               </div>
             ))}
@@ -41,9 +40,27 @@ const Profile = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState(Cookies.get('token') || '');
   const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
+  const [subs, setSubs] = useState(Cookies.get('subs') || '');
 
-  const subClick = (event) => {
+  const subClick = async (event) => {
     event.preventDefault();
+    try {
+      let res = await fetch('https://m1.itsk.pw/newsfeed/auth/get_subs', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.status === 200) {
+        const responseJson = await res.json();
+        console.log(responseJson);
+        const subs = responseJson.subs;
+        Cookies.set('subs', subs);
+        setSubs(subs);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
