@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import '../scss/auth.scss';
 import { useState } from 'react';
 import InputMask from 'react-input-mask';
-import { useNavigate } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -23,6 +23,8 @@ const Auth = () => {
   const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
   const [refresh_token, setRefresh_token] = useState(Cookies.get('refresh_token') || '');
   const [message, setMessage] = useState(Cookies.get('message') || '');
+  const [nickname, setNickname] = useState(Cookies.get('nickname') || '');
+  const [feed, setFeed] = useState(Cookies.get('feed') || '');
 
   const navigate = useNavigate();
 
@@ -69,12 +71,15 @@ const Auth = () => {
     try {
       let res = await fetch('https://m1.itsk.pw/newsfeed/auth/code', {
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           code: code,
         }),
       });
       if (res.status === 401) {
-        const resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
+        let resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
           method: 'POST',
           body: JSON.stringify({
             refresh_token: refresh,
@@ -97,11 +102,33 @@ const Auth = () => {
 
           let resCode = await fetch('https://m1.itsk.pw/newsfeed/auth/code', {
             method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify({
               code: code,
             }),
           });
           if (resCode.status === 200) {
+            const responseJson = await resCode.json();
+            let nickname = responseJson.nickname;
+            console.log(nickname);
+            Cookies.set('token', nickname);
+            setNickname(nickname);
+            let resGetFeed = await fetch('https://m1.itsk.pw/newsfeed/channels/get_feed', {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (resGetFeed.status === 200) {
+              const responseJson = await resGetFeed.json();
+              let feed = responseJson.feed;
+              console.log(nickname);
+              Cookies.set('feed', feed);
+              setFeed(feed);
+            }
+
             navigate('/profile');
           }
 
@@ -119,6 +146,31 @@ const Auth = () => {
         } else {
           console.log('Code verification failed');
         }
+      }
+      if (res.status === 200) {
+        const responseJson = await res.json();
+        let nickname = responseJson.nickname;
+        console.log(nickname);
+        Cookies.set('nickname', nickname);
+        setNickname(nickname);
+        let resGetFeed = await fetch('https://m1.itsk.pw/newsfeed/channels/get_feed', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (resGetFeed.status === 200) {
+          const responseJson = await resGetFeed.json();
+          if (responseJson && responseJson.feed !== null) {
+            let feed = responseJson.feed;
+
+            console.log(feed);
+            Cookies.set('feed', feed);
+            setFeed(feed);
+          }
+        }
+
+        //navigate('/profile');
       }
     } catch (error) {
       console.log(error);

@@ -45,7 +45,7 @@ const Profile = () => {
   const subClick = async (event) => {
     event.preventDefault();
     try {
-      let res = await fetch('https://m1.itsk.pw/newsfeed/auth/get_subs', {
+      let res = await fetch('https://m1.itsk.pw/newsfeed/user/get_subs', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,

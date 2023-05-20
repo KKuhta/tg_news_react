@@ -44,6 +44,9 @@ const Bxod = () => {
       let res = await fetch('https://m1.itsk.pw/newsfeed/auth/signin_number', {
         mode: 'cors',
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           number: number,
         }),
@@ -71,6 +74,18 @@ const Bxod = () => {
         } else {
           console.log('Code verification failed');
         }
+      }
+      if (res.status === 200) {
+        const responseJson = await res.json();
+        console.log(responseJson);
+        const token = responseJson.token;
+        const refresh = responseJson.refresh;
+        setToken(token);
+        setRefresh(refresh);
+        Cookies.set('token', token);
+        Cookies.set('refresh', refresh);
+        //checkAuthorization();
+        navigate('/profile');
       }
     } catch (error) {
       console.log(error);
