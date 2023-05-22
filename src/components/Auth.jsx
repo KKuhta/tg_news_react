@@ -24,7 +24,7 @@ const Auth = () => {
   const [refresh_token, setRefresh_token] = useState(Cookies.get('refresh_token') || '');
   const [message, setMessage] = useState(Cookies.get('message') || '');
   const [nickname, setNickname] = useState(Cookies.get('nickname') || '');
-  const [feed, setFeed] = useState(Cookies.get('feed') || '');
+  const [feed, setFeed] = useState(Cookies.get('feed'));
 
   const navigate = useNavigate();
 
@@ -148,7 +148,7 @@ const Auth = () => {
         }
       }
       if (res.status === 200) {
-        const responseJson = await res.json();
+        let responseJson = await res.json();
         let nickname = responseJson.nickname;
         console.log(nickname);
         Cookies.set('nickname', nickname);
@@ -160,17 +160,14 @@ const Auth = () => {
           },
         });
         if (resGetFeed.status === 200) {
-          const responseJson = await resGetFeed.json();
-          if (responseJson && responseJson.feed !== null) {
-            let feed = responseJson.feed;
-
-            console.log(feed);
-            Cookies.set('feed', feed);
-            setFeed(feed);
-          }
+          let responseJson = await resGetFeed.json();
+          console.log(responseJson);
+          let feed = responseJson || [];
+          console.log(feed);
+          Cookies.set('feed', feed);
+          setFeed(feed);
         }
-
-        //navigate('/profile');
+        navigate('/profile');
       }
     } catch (error) {
       console.log(error);

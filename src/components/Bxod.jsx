@@ -23,20 +23,20 @@ const Bxod = () => {
   const [refresh_token, setRefresh_token] = useState(Cookies.get('refresh_token') || '');
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   checkAuthorization();
-  // }, []);
+  useEffect(() => {
+    checkAuthorization();
+  }, []);
 
-  // const checkAuthorization = async () => {
-  //   if (token) {
-  //     console.log('Пользователь авторизован');
-  //     //console.log('token:', token);
-  //     //navigate('/profile');
-  //   } else {
-  //     console.log('Пользователь не авторизован');
-  //     navigate('/auth');
-  //   }
-  // };
+  const checkAuthorization = async () => {
+    if (token) {
+      console.log('Пользователь авторизован');
+      //console.log('token:', token);
+      //navigate('/profile');
+    } else {
+      console.log('Пользователь не авторизован');
+      navigate('/auth');
+    }
+  };
 
   let handleSubmit = async (event) => {
     event.preventDefault();

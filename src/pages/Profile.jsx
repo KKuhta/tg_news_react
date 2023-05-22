@@ -4,6 +4,9 @@ import Header from '../components/Header';
 import Cookies from 'js-cookie';
 import newsData from '../example.json';
 import { useNavigate } from 'react-router-dom';
+import subsTest from '../subsTest.json';
+import feedTest from '../feedTest.json';
+import Modal from '../components/Modal/Modal';
 
 const News = ({ group }) => {
   const [showMore, setShowMore] = useState(false);
@@ -37,30 +40,40 @@ const News = ({ group }) => {
 };
 
 const Profile = () => {
+  const [feededTest, setFeededTest] = useState(feedTest);
+  const updateFeededTest = (newFeededTest) => {
+    setFeededTest(newFeededTest);
+  };
+  // const [subedTest, setSubedTest] = useState(subsTest);
+
   const navigate = useNavigate();
   const [token, setToken] = useState(Cookies.get('token') || '');
   const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
   const [subs, setSubs] = useState(Cookies.get('subs') || '');
+  const [feed, setFeed] = useState(Cookies.get('feed') || '' || []);
+  const [modalActive, setModalActive] = useState(false);
+
+  const subsClick = () => {};
 
   const subClick = async (event) => {
-    event.preventDefault();
-    try {
-      let res = await fetch('https://m1.itsk.pw/newsfeed/user/get_subs', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (res.status === 200) {
-        const responseJson = await res.json();
-        console.log(responseJson);
-        const subs = responseJson.subs;
-        Cookies.set('subs', subs);
-        setSubs(subs);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    //event.preventDefault();
+    // try {
+    //   let res = await fetch('https://m1.itsk.pw/newsfeed/user/get_subs', {
+    //     method: 'GET',
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   });
+    //   if (res.status === 200) {
+    //     const responseJson = await res.json();
+    //     console.log(responseJson);
+    //     const subs = responseJson.subs;
+    //     Cookies.set('subs', subs);
+    //     setSubs(subs);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   useEffect(() => {
@@ -88,25 +101,23 @@ const Profile = () => {
               <News key={index} group={item.group} />
             ))}
           </div>
+
           <div className="subscription">
             <h1 className="subscription__h1">Подписки</h1>
             <ul>
-              <li>
-                <p className="subscription__p">Издание 1</p>
-              </li>
-              <li>
-                <p className="subscription__p">Издание 2</p>
-              </li>
-              <li>
-                <p className="subscription__p">Издание 3</p>
-              </li>
+              {feededTest.map((item, index) => (
+                <li key={index}>
+                  <p className="subscription__p">{item.name}</p>
+                </li>
+              ))}
             </ul>
-            <button onClick={subClick} className="subscription__button">
+            <button onClick={() => setModalActive(true)} className="subscription__button">
               +
             </button>
           </div>
         </div>
       </div>
+      <Modal active={modalActive} setActive={setModalActive} updateFeededTest={updateFeededTest} />
     </div>
   );
 };
