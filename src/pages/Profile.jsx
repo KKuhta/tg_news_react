@@ -56,24 +56,25 @@ const Profile = () => {
   const subsClick = () => {};
 
   const subClick = async (event) => {
-    //event.preventDefault();
-    // try {
-    //   let res = await fetch('https://m1.itsk.pw/newsfeed/user/get_subs', {
-    //     method: 'GET',
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   });
-    //   if (res.status === 200) {
-    //     const responseJson = await res.json();
-    //     console.log(responseJson);
-    //     const subs = responseJson.subs;
-    //     Cookies.set('subs', subs);
-    //     setSubs(subs);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    event.preventDefault();
+    try {
+      let res = await fetch('https://m1.itsk.pw/newsfeed/user/get_subs', {
+        method: 'GET',
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
+      });
+      if (res.status === 200) {
+        const responseJson = await res.json();
+        console.log(responseJson);
+        const subs = responseJson.subs;
+        Cookies.set('subs', subs);
+        setSubs(subs);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setModalActive(true)
   };
 
   useEffect(() => {
@@ -111,7 +112,7 @@ const Profile = () => {
                 </li>
               ))}
             </ul>
-            <button onClick={() => setModalActive(true)} className="subscription__button">
+            <button onClick={subClick} className="subscription__button">
               +
             </button>
           </div>
