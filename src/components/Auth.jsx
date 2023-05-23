@@ -42,10 +42,6 @@ const Auth = () => {
       if (res.status === 200) {
         let responseJson = await res.json();
         console.log(responseJson);
-        // let message = responseJson.message;
-        // console.log('message:', message);
-        // Cookies.set('message', message);
-        // setMessage(message);
 
         let token = responseJson.token;
         console.log('token:', token);
@@ -122,9 +118,10 @@ const Auth = () => {
               },
             });
             if (resGetFeed.status === 200) {
-              const responseJson = await resGetFeed.json();
-              let feed = responseJson.feed;
-              console.log(nickname);
+              let responseJson = await resGetFeed.json();
+              console.log(responseJson);
+              let feed = responseJson || [];
+              console.log(feed);
               Cookies.set('feed', feed);
               setFeed(feed);
             }

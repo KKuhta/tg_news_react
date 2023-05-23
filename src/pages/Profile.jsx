@@ -49,32 +49,111 @@ const Profile = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState(Cookies.get('token') || '');
   const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
-  const [subs, setSubs] = useState(Cookies.get('subs') || '');
+  const [names, setSubsName] = useState(Cookies.get('names') || []);
+  const [tags, setSubsTag] = useState(Cookies.get('tags') || []);
+  const [subs, setSubs] = useState(Cookies.get('subs') || []);
+
   const [feed, setFeed] = useState(Cookies.get('feed') || '' || []);
   const [modalActive, setModalActive] = useState(false);
-
-  const subsClick = () => {};
 
   const subClick = async (event) => {
     event.preventDefault();
     try {
       let res = await fetch('https://m1.itsk.pw/newsfeed/user/get_subs', {
         method: 'GET',
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (res.status === 200) {
         const responseJson = await res.json();
         console.log(responseJson);
-        const subs = responseJson.subs;
-        Cookies.set('subs', subs);
+
+        let subs = responseJson;
+        Cookies.set('subs', responseJson);
         setSubs(subs);
+        console.log(subs);
+
+        const names = responseJson.map((item) => item.name);
+        const tags = responseJson.map((item) => item.tag);
+
+        console.log('names', names);
+        console.log('tags', tags);
+
+        // Записываем массивы в куки
+        Cookies.set('names', JSON.stringify(names));
+        setSubsName(names);
+        Cookies.set('tags', JSON.stringify(tags));
+        setSubsTag(tags);
+
+        // let names = subs.name;
+        // console.log('names:', names);
+        // Cookies.set('names', names);
+        // setSubsName(names);
+
+        // let tags = subs.tag;
+        // console.log('tags:', tags);
+        // Cookies.set('tags', tags);
+        // setSubsTag(tags);
+        // const extractedName = responseJson.map((item) => item.name);
+        // console.log(extractedName);
+        // const formattedNames = extractedName.map((name) => ({ name }));
+        // console.log(formattedNames);
+        // Cookies.set('names', formattedNames);
+        // setSubsName(formattedNames);
+
+        // const extractedTag = responseJson.map((item) => item.tag);
+        // console.log(extractedTag);
+        // const formattedTags = extractedTag.map((tag) => ({ tag }));
+        // console.log(formattedTags);
+        // Cookies.set('tags', formattedTags);
+        // setSubsTag(formattedTags);
+      }
+      if (res.status === 401) {
+        const resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
+          method: 'POST',
+          body: JSON.stringify({
+            refresh_token: refresh,
+          }),
+        });
+        if (resRefresh.status === 200) {
+          const responseJson = await resRefresh.json();
+          console.log(responseJson);
+          const token = responseJson.token;
+          const refresh = responseJson.refresh;
+          setToken(token);
+          setRefresh(refresh);
+          Cookies.set('token', token);
+          Cookies.set('refresh', refresh);
+
+          let res = await fetch('https://m1.itsk.pw/newsfeed/user/get_subs', {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (res.status === 200) {
+            const responseJson = await res.json();
+            console.log(responseJson);
+
+            const extractedName = responseJson.map((item) => item.name);
+            console.log(extractedName);
+            Cookies.set('names', extractedName);
+            setSubsName(extractedName);
+
+            const extractedTag = responseJson.map((item) => item.tag);
+            console.log(extractedTag);
+            Cookies.set('tags', extractedTag);
+            setSubsTag(extractedTag);
+          }
+        } else {
+          console.log('failed');
+        }
       }
     } catch (error) {
       console.log(error);
     }
-    setModalActive(true)
+    setModalActive(true);
   };
 
   useEffect(() => {
@@ -106,7 +185,7 @@ const Profile = () => {
           <div className="subscription">
             <h1 className="subscription__h1">Подписки</h1>
             <ul>
-              {feededTest.map((item, index) => (
+              {feed.map((item, index) => (
                 <li key={index}>
                   <p className="subscription__p">{item.name}</p>
                 </li>

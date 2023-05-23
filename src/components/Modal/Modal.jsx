@@ -8,7 +8,11 @@ const Modal = ({ active, setActive, updateFeededTest }) => {
   const [feededTest, setFeededTest] = useState(feedTest);
   const [subedTest, setSubedTest] = useState(subsTest);
   const [token, setToken] = useState(Cookies.get('token') || '');
+  const [feed, setFeed] = useState(Cookies.get('feed') || []);
 
+  const [names, setSubsName] = useState(Cookies.get('names') || []);
+  const [tags, setSubsTag] = useState(Cookies.get('tags') || []);
+  const [subs, setSubs] = useState(Cookies.get('subs') || '[]');
 
   const removeSubs = async (index) => {
     const removedSub = feededTest[index];
@@ -21,21 +25,15 @@ const Modal = ({ active, setActive, updateFeededTest }) => {
     try {
       let res = await fetch('https://m1.itsk.pw/newsfeed/channels/remove_feed', {
         method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           tag: removedSub.tag,
         }),
-        headers: {Autorization: `Bearer ${token}`}
       });
 
       if (res.status === 200) {
         let responseJson = await res.json();
         console.log(responseJson);
-
-        let removeFeed = responseJson.name;
-        console.log('token:', removeFeed);
-        Cookies.set('token', removeFeed);
-        setFeededTest(removeFeed);
-
       } else {
         console.log(res);
       }
@@ -44,8 +42,7 @@ const Modal = ({ active, setActive, updateFeededTest }) => {
     }
   };
 
-  const addSubs = async (index) => {
-
+  const addSubs = async (index, name, tag) => {
     const selectedSub = subedTest[index];
     const updatedFeededTest = [...feededTest, selectedSub];
     setFeededTest(updatedFeededTest);
@@ -54,41 +51,40 @@ const Modal = ({ active, setActive, updateFeededTest }) => {
     const updatedSubedTest = subedTest.filter((item, i) => i !== index);
     setSubedTest(updatedSubedTest);
     console.log(updatedSubedTest);
+
     try {
-      let res = await fetch('https://m1.itsk.pw/newsfeed/channels/add_feed', {
+      let resAdd = await fetch('https://m1.itsk.pw/newsfeed/channels/add_feed', {
         mode: 'cors',
         method: 'POST',
         body: JSON.stringify({
-          tag: updatedSubedTest,
+          name: name,
+          tag: tag,
         }),
-        headers: {Autorization: `Bearer ${token}`}
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (res.status === 200) {
-        let responseJson = await res.json();
+      if (resAdd.status === 200) {
+        let responseJson = await resAdd.json();
         console.log(responseJson);
-        
 
-        let addFeed = responseJson.name;
-        console.log('token:', addFeed);
-        Cookies.set('token', addFeed);
+        let addFeed = responseJson;
+        console.log('addedSubs:', addFeed);
+        Cookies.set('addedSubs', JSON.stringify(addFeed));
         setSubedTest(addFeed);
-
       } else {
-        console.log(res);
+        console.log(resAdd);
       }
     } catch (error) {
       console.log(error);
     }
   };
-
   return (
     <div className={active ? 'modal active' : 'modal'} onClick={() => setActive(false)}>
       <div className="modal__content" onClick={(event) => event.stopPropagation()}>
         <div className="get__feed">
           <h2 className="modal__feed">Добавленные подписки</h2>
           <ul>
-            {feededTest.map((item, index) => (
+            {feed.map((item, index) => (
               <li key={index} className="modal__li">
                 <p className="modal__p">{item.name}</p>
                 <button onClick={() => removeSubs(index)}>Удалить</button>
@@ -96,10 +92,11 @@ const Modal = ({ active, setActive, updateFeededTest }) => {
             ))}
           </ul>
         </div>
+
         <div className="get__subs">
           <h2 className="modal__feed">Добавить подписки</h2>
           <ul>
-            {subedTest.map((item, index) => (
+            {feed.map((item, index) => (
               <li key={index} className="modal__li">
                 <p className="modal__p">{item.name}</p>
                 <button onClick={() => addSubs(index)}>Добавить</button>
