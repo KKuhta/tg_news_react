@@ -70,7 +70,7 @@ const Profile = () => {
         console.log(responseJson);
 
         let subs = responseJson;
-        Cookies.set('subs', responseJson);
+        //Cookies.set('subs', JSON.stringify(subs));
         setSubs(subs);
         console.log(subs);
 
@@ -81,33 +81,10 @@ const Profile = () => {
         console.log('tags', tags);
 
         // Записываем массивы в куки
-        Cookies.set('names', JSON.stringify(names));
+        //Cookies.set('names', JSON.stringify(names));
         setSubsName(names);
-        Cookies.set('tags', JSON.stringify(tags));
+        //Cookies.set('tags', JSON.stringify(tags));
         setSubsTag(tags);
-
-        // let names = subs.name;
-        // console.log('names:', names);
-        // Cookies.set('names', names);
-        // setSubsName(names);
-
-        // let tags = subs.tag;
-        // console.log('tags:', tags);
-        // Cookies.set('tags', tags);
-        // setSubsTag(tags);
-        // const extractedName = responseJson.map((item) => item.name);
-        // console.log(extractedName);
-        // const formattedNames = extractedName.map((name) => ({ name }));
-        // console.log(formattedNames);
-        // Cookies.set('names', formattedNames);
-        // setSubsName(formattedNames);
-
-        // const extractedTag = responseJson.map((item) => item.tag);
-        // console.log(extractedTag);
-        // const formattedTags = extractedTag.map((tag) => ({ tag }));
-        // console.log(formattedTags);
-        // Cookies.set('tags', formattedTags);
-        // setSubsTag(formattedTags);
       }
       if (res.status === 401) {
         const resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
@@ -136,15 +113,22 @@ const Profile = () => {
             const responseJson = await res.json();
             console.log(responseJson);
 
-            const extractedName = responseJson.map((item) => item.name);
-            console.log(extractedName);
-            Cookies.set('names', extractedName);
-            setSubsName(extractedName);
+            let subs = responseJson;
+            //Cookies.set('subs', JSON.stringify(subs));
+            setSubs(subs);
+            console.log(subs);
 
-            const extractedTag = responseJson.map((item) => item.tag);
-            console.log(extractedTag);
-            Cookies.set('tags', extractedTag);
-            setSubsTag(extractedTag);
+            const names = responseJson.map((item) => item.name);
+            const tags = responseJson.map((item) => item.tag);
+
+            console.log('names', names);
+            console.log('tags', tags);
+
+            // Записываем массивы в куки
+            //Cookies.set('names', JSON.stringify(names));
+            setSubsName(names);
+            //Cookies.set('tags', JSON.stringify(tags));
+            setSubsTag(tags);
           }
         } else {
           console.log('failed');
@@ -197,7 +181,12 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      <Modal active={modalActive} setActive={setModalActive} updateFeededTest={updateFeededTest} />
+      <Modal
+        subs={subs}
+        active={modalActive}
+        setActive={setModalActive}
+        updateFeededTest={updateFeededTest}
+      />
     </div>
   );
 };

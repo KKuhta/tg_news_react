@@ -46,7 +46,7 @@ const Checking = () => {
             setRefresh(refresh);
             Cookies.set('token', token);
             Cookies.set('refresh', refresh);
-            //checkAuthorization();
+            checkAuthorization();
             navigate('/profile');
           } else {
             console.log('Code verification failed');

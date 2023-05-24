@@ -4,7 +4,7 @@ import subsTest from '../../subsTest.json';
 import feedTest from '../../feedTest.json';
 import Cookies from 'js-cookie';
 
-const Modal = ({ active, setActive, updateFeededTest }) => {
+const Modal = ({ active, setActive, updateFeededTest, subs }) => {
   const [feededTest, setFeededTest] = useState(feedTest);
   const [subedTest, setSubedTest] = useState(subsTest);
   const [token, setToken] = useState(Cookies.get('token') || '');
@@ -12,71 +12,58 @@ const Modal = ({ active, setActive, updateFeededTest }) => {
 
   const [names, setSubsName] = useState(Cookies.get('names') || []);
   const [tags, setSubsTag] = useState(Cookies.get('tags') || []);
-  const [subs, setSubs] = useState(Cookies.get('subs') || '[]');
+  const [sub, setSub] = useState(subs);
 
   const removeSubs = async (index) => {
-    const removedSub = feededTest[index];
-    const updatedFeededTest = feededTest.filter((item, i) => i !== index);
-    setFeededTest(updatedFeededTest);
-    updateFeededTest(updatedFeededTest); // Обновление данных в родительском компоненте
+    // const removedSub = feededTest[index];
+    // const updatedFeededTest = feededTest.filter((item, i) => i !== index);
+    // setFeededTest(updatedFeededTest);
+    // updateFeededTest(updatedFeededTest); // Обновление данных в родительском компоненте
 
-    setSubedTest([...subedTest, removedSub]);
+    // setSubedTest([...subedTest, removedSub]);
     //console.log(removedSub);
+    const removedSub = subs[index];
     try {
-      let res = await fetch('https://m1.itsk.pw/newsfeed/channels/remove_feed', {
+      let resDel = await fetch('https://m1.itsk.pw/newsfeed/channels/remove_feed', {
+        mode: 'cors',
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
         body: JSON.stringify({
+          name: removedSub.name,
           tag: removedSub.tag,
         }),
       });
-
-      if (res.status === 200) {
-        let responseJson = await res.json();
-        console.log(responseJson);
-      } else {
-        console.log(res);
-      }
     } catch (error) {
       console.log(error);
     }
+    const updatedFeededTest = [...feed];
+    updatedFeededTest.splice(index, 1);
+    setFeed(updatedFeededTest);
   };
 
-  const addSubs = async (index, name, tag) => {
-    const selectedSub = subedTest[index];
-    const updatedFeededTest = [...feededTest, selectedSub];
-    setFeededTest(updatedFeededTest);
-    updateFeededTest(updatedFeededTest); // Обновление данных в родительском компоненте
-
-    const updatedSubedTest = subedTest.filter((item, i) => i !== index);
-    setSubedTest(updatedSubedTest);
-    console.log(updatedSubedTest);
+  const addSubs = async (index) => {
+    const addedSub = subs[index];
 
     try {
       let resAdd = await fetch('https://m1.itsk.pw/newsfeed/channels/add_feed', {
         mode: 'cors',
         method: 'POST',
-        body: JSON.stringify({
-          name: name,
-          tag: tag,
-        }),
         headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          name: addedSub.name,
+          tag: addedSub.tag,
+        }),
       });
-
-      if (resAdd.status === 200) {
-        let responseJson = await resAdd.json();
-        console.log(responseJson);
-
-        let addFeed = responseJson;
-        console.log('addedSubs:', addFeed);
-        Cookies.set('addedSubs', JSON.stringify(addFeed));
-        setSubedTest(addFeed);
-      } else {
-        console.log(resAdd);
-      }
     } catch (error) {
       console.log(error);
     }
+    const updatedFeededTest = [...feed, addedSub];
+    setFeed(updatedFeededTest);
+    // const updatedFeed = [...feed, addedSub];
+    // setFeed(updatedFeed);
+    // //updateFeededTest(updatedFeededTest); // Обновление данных в родительском компоненте
+    // const updatedSubs = subs.filter((item, i) => i !== index);
+    // setSub(updatedSubs);
   };
   return (
     <div className={active ? 'modal active' : 'modal'} onClick={() => setActive(false)}>
@@ -96,8 +83,8 @@ const Modal = ({ active, setActive, updateFeededTest }) => {
         <div className="get__subs">
           <h2 className="modal__feed">Добавить подписки</h2>
           <ul>
-            {feed.map((item, index) => (
-              <li key={index} className="modal__li">
+            {subs.map((item, index) => (
+              <li className="modal__li" key={index}>
                 <p className="modal__p">{item.name}</p>
                 <button onClick={() => addSubs(index)}>Добавить</button>
               </li>
