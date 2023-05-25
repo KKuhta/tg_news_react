@@ -1,32 +1,17 @@
 import React, { useState } from 'react';
 import './Modal.scss';
-import subsTest from '../../subsTest.json';
-import feedTest from '../../feedTest.json';
 import Cookies from 'js-cookie';
 
 const Modal = ({ active, setActive, updateFeededTest, subs }) => {
-  //const [feededTest, setFeededTest] = useState(feedTest);
-  //const [subedTest, setSubedTest] = useState(subsTest);
   const [token, setToken] = useState(Cookies.get('token') || '');
   const [feed, setFeed] = useState(Cookies.get('feed') || []);
-
-  const [names, setSubsName] = useState(Cookies.get('names') || []);
-  const [tags, setSubsTag] = useState(Cookies.get('tags') || []);
   const [sub, setSub] = useState(subs);
 
   const removeSubs = async (index) => {
-    // const removedSub = feededTest[index];
-    // const updatedFeededTest = feededTest.filter((item, i) => i !== index);
-    // setFeededTest(updatedFeededTest);
-    // updateFeededTest(updatedFeededTest); // Обновление данных в родительском компоненте
-
-    // setSubedTest([...subedTest, removedSub]);
-    //console.log(removedSub);
     const removedSub = feed[index];
     const updatedFeededTest = feed.filter((item, i) => i !== index);
     setFeed(updatedFeededTest);
-    updateFeededTest(updatedFeededTest); // Обновление данных в родительском компоненте
-
+    updateFeededTest(updatedFeededTest);
     setSub([...sub, removedSub]);
     try {
       let resDel = await fetch('https://m1.itsk.pw/newsfeed/channels/remove_feed', {
@@ -62,14 +47,9 @@ const Modal = ({ active, setActive, updateFeededTest, subs }) => {
 
     const updatedFeededTest = [...feed, addedSub];
     setFeed(updatedFeededTest);
-    updateFeededTest(updatedFeededTest); // Обновление данных в родительском компоненте
+    updateFeededTest(updatedFeededTest);
     const updatedSubsTest = subs.filter((item, i) => i !== index);
     setSub(updatedSubsTest);
-    // const updatedFeed = [...feed, addedSub];
-    // setFeed(updatedFeed);
-    // //updateFeededTest(updatedFeededTest); // Обновление данных в родительском компоненте
-    // const updatedSubs = subs.filter((item, i) => i !== index);
-    // setSub(updatedSubs);
   };
   return (
     <div className={active ? 'modal active' : 'modal'} onClick={() => setActive(false)}>

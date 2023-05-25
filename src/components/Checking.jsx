@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from 'react';
-
 import '../scss/auth.scss';
-import { Link, useNavigate } from 'react-router-dom';
-import ProfileLogo from '../img/profileLogo.png';
+import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 const Checking = () => {
   const [token, setToken] = useState(Cookies.get('token') || '');
   const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
-  const [refresh_token, setRefresh_token] = useState('');
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,7 +32,6 @@ const Checking = () => {
               refresh_token: refresh,
             }),
           });
-          console.log(refresh_token);
           if (resRefresh.status === 200) {
             const responseJson = await resRefresh.json();
             console.log(responseJson);
