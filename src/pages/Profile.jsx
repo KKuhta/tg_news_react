@@ -7,53 +7,24 @@ import { useNavigate } from 'react-router-dom';
 import subsTest from '../subsTest.json';
 import feedTest from '../feedTest.json';
 import Modal from '../components/Modal/Modal';
-
-const News = ({ group }) => {
-  const [showMore, setShowMore] = useState(false);
-
-  const handleClick = () => {
-    setShowMore(!showMore);
-  };
-
-  return (
-    <div className="news">
-      <div>
-        <h1 className="news__h1">{group[0].source_channel}</h1>
-        <p className="news__p">{group[0].text}</p>
-      </div>
-      {group.length > 1 && (
-        <div>
-          {showMore &&
-            group.slice(1).map((item, index) => (
-              <div key={index}>
-                <h1 className="news__h1">{item.source_channel}</h1>
-                <p className="news__p">{item.text}</p>
-              </div>
-            ))}
-          <button className="news__button" onClick={handleClick}>
-            {showMore ? 'Скрыть' : 'Подробнее'}
-          </button>
-        </div>
-      )}
-    </div>
-  );
-};
+import News from '../components/News';
 
 const Profile = () => {
-  const [feededTest, setFeededTest] = useState(feedTest);
+  const [feed, setFeed] = useState(Cookies.get('feed') || []);
   const updateFeededTest = (newFeededTest) => {
-    setFeededTest(newFeededTest);
+    setFeed(newFeededTest);
+    //Cookies.set('feed', JSON.stringify(newFeededTest));
   };
   // const [subedTest, setSubedTest] = useState(subsTest);
 
   const navigate = useNavigate();
+
   const [token, setToken] = useState(Cookies.get('token') || '');
   const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
   const [names, setSubsName] = useState(Cookies.get('names') || []);
   const [tags, setSubsTag] = useState(Cookies.get('tags') || []);
   const [subs, setSubs] = useState(Cookies.get('subs') || []);
 
-  const [feed, setFeed] = useState(Cookies.get('feed') || '' || []);
   const [modalActive, setModalActive] = useState(false);
 
   const subClick = async (event) => {
@@ -81,9 +52,9 @@ const Profile = () => {
         console.log('tags', tags);
 
         // Записываем массивы в куки
-        //Cookies.set('names', JSON.stringify(names));
+        Cookies.set('names', JSON.stringify(names));
         setSubsName(names);
-        //Cookies.set('tags', JSON.stringify(tags));
+        Cookies.set('tags', JSON.stringify(tags));
         setSubsTag(tags);
       }
       if (res.status === 401) {
@@ -155,15 +126,42 @@ const Profile = () => {
     }
   };
 
+  const [showMore, setShowMore] = useState(false);
+  const [newsLenta, setNewsLenta] = useState('');
+
+  const handleClick = async () => {
+    let res = await fetch('https://m1.itsk.pw/newsfeed/user/form_feed', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (res.status === 200) {
+      let responseJson = await res.json();
+      let newsLenta = responseJson;
+      console.log(newsLenta);
+      setNewsLenta(newsLenta);
+    }
+    setShowMore(!showMore);
+  };
+
   return (
-    <div className="background">
+    <div className="">
       <Header />
       <div className="profile">
         <div className="container">
-          <div className="newsBlock">
-            {newsData.map((item, index) => (
-              <News key={index} group={item.group} />
-            ))}
+          <div className="news__lentabutton">
+            <button onClick={handleClick} className="news__lentabut">
+              {showMore ? 'Скрыть ленту' : 'Загрузить ленту'}
+            </button>
+
+            {showMore && (
+              <div className="newsBlock">
+                {newsLenta.map((item, index) => (
+                  <News key={index} group={item.group} />
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="subscription">

@@ -122,7 +122,7 @@ const Auth = () => {
               console.log(responseJson);
               let feed = responseJson || [];
               console.log(feed);
-              Cookies.set('feed', feed);
+              //Cookies.set('feed', feed);
               setFeed(feed);
             }
 
@@ -161,7 +161,7 @@ const Auth = () => {
           console.log(responseJson);
           let feed = responseJson || [];
           console.log(feed);
-          Cookies.set('feed', feed);
+          //Cookies.set('feed', JSON.stringify(feed));
           setFeed(feed);
         }
         navigate('/profile');

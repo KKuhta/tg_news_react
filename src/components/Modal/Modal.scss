@@ -19,15 +19,30 @@
   }
   &__feed {
     font-size: 30px;
+    text-align: center;
   }
   &__li {
     display: flex;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0px 5px 0px;
   }
 
   &__p {
     color: #1967ff;
     font-weight: bold;
+  }
+
+  &__button {
+    width: 150px;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 15px;
+    color: #fff;
+    background: #1967ff;
+    padding: 0px;
+    border-color: rgba($color: #000000, $alpha: 0.1);
+    margin-left: 10px;
   }
 }
 

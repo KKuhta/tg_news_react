@@ -5,8 +5,8 @@ import feedTest from '../../feedTest.json';
 import Cookies from 'js-cookie';
 
 const Modal = ({ active, setActive, updateFeededTest, subs }) => {
-  const [feededTest, setFeededTest] = useState(feedTest);
-  const [subedTest, setSubedTest] = useState(subsTest);
+  //const [feededTest, setFeededTest] = useState(feedTest);
+  //const [subedTest, setSubedTest] = useState(subsTest);
   const [token, setToken] = useState(Cookies.get('token') || '');
   const [feed, setFeed] = useState(Cookies.get('feed') || []);
 
@@ -22,7 +22,12 @@ const Modal = ({ active, setActive, updateFeededTest, subs }) => {
 
     // setSubedTest([...subedTest, removedSub]);
     //console.log(removedSub);
-    const removedSub = subs[index];
+    const removedSub = feed[index];
+    const updatedFeededTest = feed.filter((item, i) => i !== index);
+    setFeed(updatedFeededTest);
+    updateFeededTest(updatedFeededTest); // Обновление данных в родительском компоненте
+
+    setSub([...sub, removedSub]);
     try {
       let resDel = await fetch('https://m1.itsk.pw/newsfeed/channels/remove_feed', {
         mode: 'cors',
@@ -36,9 +41,6 @@ const Modal = ({ active, setActive, updateFeededTest, subs }) => {
     } catch (error) {
       console.log(error);
     }
-    const updatedFeededTest = [...feed];
-    updatedFeededTest.splice(index, 1);
-    setFeed(updatedFeededTest);
   };
 
   const addSubs = async (index) => {
@@ -57,8 +59,12 @@ const Modal = ({ active, setActive, updateFeededTest, subs }) => {
     } catch (error) {
       console.log(error);
     }
+
     const updatedFeededTest = [...feed, addedSub];
     setFeed(updatedFeededTest);
+    updateFeededTest(updatedFeededTest); // Обновление данных в родительском компоненте
+    const updatedSubsTest = subs.filter((item, i) => i !== index);
+    setSub(updatedSubsTest);
     // const updatedFeed = [...feed, addedSub];
     // setFeed(updatedFeed);
     // //updateFeededTest(updatedFeededTest); // Обновление данных в родительском компоненте
@@ -74,7 +80,9 @@ const Modal = ({ active, setActive, updateFeededTest, subs }) => {
             {feed.map((item, index) => (
               <li key={index} className="modal__li">
                 <p className="modal__p">{item.name}</p>
-                <button onClick={() => removeSubs(index)}>Удалить</button>
+                <button onClick={() => removeSubs(index)} className="modal__button">
+                  Удалить
+                </button>
               </li>
             ))}
           </ul>
@@ -86,7 +94,9 @@ const Modal = ({ active, setActive, updateFeededTest, subs }) => {
             {subs.map((item, index) => (
               <li className="modal__li" key={index}>
                 <p className="modal__p">{item.name}</p>
-                <button onClick={() => addSubs(index)}>Добавить</button>
+                <button onClick={() => addSubs(index)} className="modal__button">
+                  Добавить
+                </button>
               </li>
             ))}
           </ul>
