@@ -61,6 +61,14 @@ ul {
   }
 }
 
+.subscrip {width: 220px;
+  height: 100%;
+  padding: 0;
+  background-color: #0d0d0d;
+  border-radius: 10px;
+  margin: 30px;
+  text-align: center;}
+
 .subscription {
   width: 220px;
   height: 100%;
@@ -97,8 +105,26 @@ ul {
     display: flex;
     justify-content: center;
     color: #0d0d0d;
-    line-height: 1.03;
+    line-height: 0.8;
     margin: 0 auto;
     margin-bottom: 10px;
+  }
+}
+
+.recommendation {
+  &__button{
+    width: 200px;
+    height: 40px;
+    border-radius: 50px;
+    font-size: 25px;
+    background: #1967ff;
+    border: 0px;
+    // display: flex;
+    // justify-content: center;
+    color: #0d0d0d;
+    //line-height: 1.02;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    //text-align: center;
   }
 }

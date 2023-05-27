@@ -17,6 +17,7 @@ const Profile = () => {
   const [names, setSubsName] = useState(Cookies.get('names') || []);
   const [tags, setSubsTag] = useState(Cookies.get('tags') || []);
   const [subs, setSubs] = useState(Cookies.get('subs') || []);
+  const [recommendation, setRecommendation] = useState('');
   const [modalActive, setModalActive] = useState(false);
 
   const subClick = async (event) => {
@@ -89,6 +90,70 @@ const Profile = () => {
     setModalActive(true);
   };
 
+  const recClick = async (event) => {
+    event.preventDefault();
+    try {
+      let res = await fetch('https://m1.itsk.pw/newsfeed/user/get_recommendation', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.status === 200) {
+        const responseJson = await res.json();
+        console.log(responseJson);
+        let recommendation = responseJson;
+        setRecommendation(recommendation);
+        console.log(recommendation);
+        // const names = responseJson.map((item) => item.name);
+        // const tags = responseJson.map((item) => item.tag);
+        // console.log('names', names);
+        // console.log('tags', tags);
+        // Cookies.set('names', JSON.stringify(names));
+        // setSubsName(names);
+        // Cookies.set('tags', JSON.stringify(tags));
+        // setSubsTag(tags);
+      }
+      if (res.status === 401) {
+        const resRefresh = await fetch('https://m1.itsk.pw/newsfeed/auth/refresh', {
+          method: 'POST',
+          body: JSON.stringify({
+            refresh_token: refresh,
+          }),
+        });
+        if (resRefresh.status === 200) {
+          const responseJson = await resRefresh.json();
+          console.log(responseJson);
+          const token = responseJson.token;
+          const refresh = responseJson.refresh;
+          setToken(token);
+          setRefresh(refresh);
+          Cookies.set('token', token);
+          Cookies.set('refresh', refresh);
+
+          let res = await fetch('https://m1.itsk.pw/newsfeed/user/get_recommendation', {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (res.status === 200) {
+            const responseJson = await res.json();
+            console.log(responseJson);
+            let recommendation = responseJson;
+            setRecommendation(recommendation);
+            console.log(recommendation);
+          }
+        } else {
+          console.log('failed');
+        }
+      }
+      //setShowMore(!showMore);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     checkAuthorization();
   }, []);
@@ -98,6 +163,7 @@ const Profile = () => {
       console.log('Пользователь авторизован');
       console.log('token:', token);
       console.log('refresh:', refresh);
+      
     } else {
       console.log('Пользователь не авторизован');
       navigate('/');
@@ -105,6 +171,7 @@ const Profile = () => {
   };
 
   const [showMore, setShowMore] = useState(false);
+  
   const [newsLenta, setNewsLenta] = useState('');
 
   const handleClick = async () => {
@@ -153,8 +220,24 @@ const Profile = () => {
             </ul>
             <button onClick={subClick} className="subscription__button">
               +
+            </button><div className='recommendation'>
+            <button onClick={recClick} className="recommendation__button">
+            {showMore ? 'Закрыть' : 'Рекомендации'}
             </button>
+            {showMore && (
+              <div className="recommendation__block">
+                <h1 className="subscription__h1">Рекомендации</h1>
+
+                {/* {recommendation.map((item, index) => (
+                <li key={index}>
+                  <p className="subscription__p">{item}</p>
+                </li>
+              ))} */}
+              </div>
+            )}
           </div>
+          </div>
+          
         </div>
       </div>
       <Modal

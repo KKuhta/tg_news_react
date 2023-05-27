@@ -3,6 +3,7 @@ import '../scss/auth.scss';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
+
 const Checking = () => {
   const [token, setToken] = useState(Cookies.get('token') || '');
   const [refresh, setRefresh] = useState(Cookies.get('refresh') || '');
@@ -49,6 +50,9 @@ const Checking = () => {
         }
         if (res.status === 403) {
           navigate('/Bxod');
+        }
+        if (res.status === 200) {
+          navigate('/profile');
         }
       } catch (error) {
         console.log(error);
