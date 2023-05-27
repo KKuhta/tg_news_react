@@ -148,7 +148,7 @@ const Profile = () => {
           console.log('failed');
         }
       }
-      //setShowMore(!showMore);
+      setRec(!showRec);
     } catch (error) {
       console.log(error);
     }
@@ -171,7 +171,7 @@ const Profile = () => {
   };
 
   const [showMore, setShowMore] = useState(false);
-  
+  const [showRec, setRec] = useState(false);
   const [newsLenta, setNewsLenta] = useState('');
 
   const handleClick = async () => {
@@ -222,17 +222,17 @@ const Profile = () => {
               +
             </button><div className='recommendation'>
             <button onClick={recClick} className="recommendation__button">
-            {showMore ? 'Закрыть' : 'Рекомендации'}
+            {showRec ? 'Закрыть' : 'Рекомендации'}
             </button>
-            {showMore && (
+            {showRec && (
               <div className="recommendation__block">
                 <h1 className="subscription__h1">Рекомендации</h1>
 
-                {/* {recommendation.map((item, index) => (
+                {recommendation.map((item, index) => (
                 <li key={index}>
                   <p className="subscription__p">{item}</p>
                 </li>
-              ))} */}
+              ))}
               </div>
             )}
           </div>
